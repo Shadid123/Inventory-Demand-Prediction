@@ -1,0 +1,82 @@
+{
+  "task": "Three-class classification of recorded demand level",
+  "target_name": "Demand Level",
+  "class_order": [
+    "Low",
+    "Medium",
+    "High"
+  ],
+  "thresholds": {
+    "training_demand_quantile_33_percent": 82.0,
+    "training_demand_quantile_67_percent": 121.0,
+    "rules": {
+      "Low": "Demand <= 82",
+      "Medium": "82 < Demand <= 121",
+      "High": "Demand > 121"
+    }
+  },
+  "feature_columns": [
+    "Store ID",
+    "Product ID",
+    "Category",
+    "Region",
+    "Inventory Level",
+    "Units Sold",
+    "Units Ordered",
+    "Price",
+    "Discount",
+    "Weather Condition",
+    "Promotion",
+    "Competitor Pricing",
+    "Seasonality",
+    "Epidemic",
+    "Year",
+    "Month",
+    "Day",
+    "DayOfWeek",
+    "DayOfYear"
+  ],
+  "categorical_columns": [
+    "Store ID",
+    "Product ID",
+    "Category",
+    "Region",
+    "Weather Condition",
+    "Seasonality"
+  ],
+  "numeric_columns": [
+    "Inventory Level",
+    "Units Sold",
+    "Units Ordered",
+    "Price",
+    "Discount",
+    "Promotion",
+    "Competitor Pricing",
+    "Epidemic",
+    "Year",
+    "Month",
+    "Day",
+    "DayOfWeek",
+    "DayOfYear"
+  ],
+  "train_rows": 60800,
+  "test_rows": 15200,
+  "test_start_date": "2023-09-01",
+  "metrics": {
+    "accuracy": 0.7836842105263158,
+    "balanced_accuracy": 0.7834108687358764,
+    "macro_precision": 0.7894588555537636,
+    "macro_recall": 0.7834108687358764,
+    "macro_f1": 0.7857685827160098,
+    "weighted_f1": 0.785525672453387
+  },
+  "baseline_metrics": {
+    "accuracy": 0.3625,
+    "balanced_accuracy": 0.3333333333333333,
+    "macro_precision": 0.12083333333333333,
+    "macro_recall": 0.3333333333333333,
+    "macro_f1": 0.17737003058103976,
+    "weighted_f1": 0.19288990825688074
+  },
+  "leakage_note": "Demand is excluded from features. Units Sold remains an input as recorded in the dataset; this task classifies the supplied observation and is not by itself proof of a future forecast."
+}

@@ -1,0 +1,90 @@
+{
+  "target": "Demand",
+  "train_rows": 60800,
+  "test_rows": 15200,
+  "test_start_date": "2023-09-01",
+  "date_range": {
+    "start": "2022-01-01",
+    "end": "2024-01-30"
+  },
+  "categorical_columns": [
+    "Store ID",
+    "Product ID",
+    "Category",
+    "Region",
+    "Weather Condition",
+    "Seasonality"
+  ],
+  "numeric_columns": [
+    "Inventory Level",
+    "Units Sold",
+    "Units Ordered",
+    "Price",
+    "Discount",
+    "Promotion",
+    "Competitor Pricing",
+    "Epidemic",
+    "Year",
+    "Month",
+    "Day",
+    "DayOfWeek",
+    "DayOfYear"
+  ],
+  "recommended_model": "Random Forest",
+  "available_values": {
+    "Store ID": [
+      "S001",
+      "S002",
+      "S003",
+      "S004",
+      "S005"
+    ],
+    "Product ID": [
+      "P0001",
+      "P0002",
+      "P0003",
+      "P0004",
+      "P0005",
+      "P0006",
+      "P0007",
+      "P0008",
+      "P0009",
+      "P0010",
+      "P0011",
+      "P0012",
+      "P0013",
+      "P0014",
+      "P0015",
+      "P0016",
+      "P0017",
+      "P0018",
+      "P0019",
+      "P0020"
+    ],
+    "Category": [
+      "Clothing",
+      "Electronics",
+      "Furniture",
+      "Groceries",
+      "Toys"
+    ],
+    "Region": [
+      "East",
+      "North",
+      "South",
+      "West"
+    ],
+    "Weather Condition": [
+      "Cloudy",
+      "Rainy",
+      "Snowy",
+      "Sunny"
+    ],
+    "Seasonality": [
+      "Autumn",
+      "Spring",
+      "Summer",
+      "Winter"
+    ]
+  }
+}

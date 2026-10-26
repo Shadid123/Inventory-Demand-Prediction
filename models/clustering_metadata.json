@@ -1,0 +1,40 @@
+{
+  "algorithm": "K-Means",
+  "cluster_count_selected": 2,
+  "candidate_k_values": [
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "selection_method": "Highest silhouette score on a deterministic sample drawn from the training period only",
+  "selection_sample_rows": 8000,
+  "training_sample_silhouette_for_selected_k": 0.25812293784769713,
+  "held_out_test_silhouette": 0.26149068003388487,
+  "test_silhouette_sample_rows": 3000,
+  "train_rows": 60800,
+  "test_rows": 15200,
+  "test_start_date": "2023-09-01",
+  "features": [
+    "Inventory Level",
+    "Units Sold",
+    "Units Ordered",
+    "Price",
+    "Discount",
+    "Competitor Pricing",
+    "Promotion",
+    "Epidemic"
+  ],
+  "excluded_fields": [
+    "Demand",
+    "Date",
+    "Store ID",
+    "Product ID",
+    "Category",
+    "Region",
+    "Weather Condition",
+    "Seasonality"
+  ],
+  "note": "Demand is intentionally excluded from clustering. Cluster numbers are arbitrary group identifiers; interpret groups by reading cluster_profiles.csv."
+}
