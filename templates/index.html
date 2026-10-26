@@ -1,0 +1,309 @@
+<!-- Declare this document as modern HTML5. -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080b18">
+  <title>Inventory Intelligence Studio</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <!-- Decorative blurred lights and texture behind the frosted-glass panels. -->
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div class="ambient ambient-three"></div>
+  <div class="noise"></div>
+
+  <!-- Main page wrapper keeps the dashboard content centered and readable. -->
+  <main class="shell">
+    <!-- Brand header and status indicator. -->
+    <header class="topbar glass-panel">
+      <div class="brand-lockup">
+        <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div>
+          <div class="eyebrow">DATA MINING / INVENTORY</div>
+          <div class="brand-name">Inventory Intelligence</div>
+        </div>
+      </div>
+      <div class="status-pill"><i></i> Models online</div>
+    </header>
+
+    <!-- Introductory hero area summarizes the purpose and methods of the application. -->
+    <section class="hero glass-panel tilt-card">
+      <div class="hero-copy">
+        <div class="eyebrow accent">PREDICTION STUDIO</div>
+        <h1>Turn inventory signals into a <span class="gradient-text">clear next move.</span></h1>
+        <p>Compare three regression models, estimate demand, and surface a reorder decision from one polished workspace.</p>
+        <div class="hero-meta">
+          <div class="meta-chip"><span class="dot violet"></span>76,000 dataset records</div>
+          <div class="meta-chip"><span class="dot cyan"></span>3 regression models</div>
+          <div class="meta-chip"><span class="dot magenta"></span>Classification + K-Means</div>
+        </div>
+      </div>
+      <div class="hero-orbit" aria-hidden="true">
+        <div class="orbit-ring ring-one"></div>
+        <div class="orbit-ring ring-two"></div>
+        <div class="orbit-core">
+          <span class="core-label">R²</span>
+          <strong>{{ '%.3f'|format(comparison[0].R2 if comparison and comparison[0].Model == 'Random Forest' else 0.870) }}</strong>
+          <small>best model</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- Show an error only when a submitted form could not be processed. -->
+    {% if error %}
+      <div class="alert glass-panel error-alert">
+        <span class="alert-icon">!</span>
+        <div><strong>Prediction could not be completed.</strong><p>{{ error }}</p></div>
+      </div>
+    {% endif %}
+
+    <!-- This form collects the conditions the models use to make a prediction. -->
+    <form method="post" id="prediction-form">
+      <section class="section-heading">
+        <div>
+          <div class="eyebrow">01 / CONTEXT</div>
+          <h2>Product & environment</h2>
+          <p>Tell the models what the current inventory situation looks like.</p>
+        </div>
+        <div class="section-badge">Input layer</div>
+      </section>
+
+      <section class="glass-panel form-card tilt-card">
+        <div class="field-grid">
+          <label class="field">
+            <span>Date</span><small>Prediction date</small>
+            <input type="date" name="date" value="{{ form.date }}" required>
+          </label>
+          <label class="field"><span>Store</span><small>Location identifier</small>
+            <select name="store_id">{% for v in values["Store ID"] %}<option value="{{v}}" {% if form.store_id==v %}selected{% endif %}>{{v}}</option>{% endfor %}</select>
+          </label>
+          <label class="field"><span>Product</span><small>SKU identifier</small>
+            <select name="product_id">{% for v in values["Product ID"] %}<option value="{{v}}" {% if form.product_id==v %}selected{% endif %}>{{v}}</option>{% endfor %}</select>
+          </label>
+          <label class="field"><span>Category</span><small>Product family</small>
+            <select name="category">{% for v in values["Category"] %}<option value="{{v}}" {% if form.category==v %}selected{% endif %}>{{v}}</option>{% endfor %}</select>
+          </label>
+          <label class="field"><span>Region</span><small>Market area</small>
+            <select name="region">{% for v in values["Region"] %}<option value="{{v}}" {% if form.region==v %}selected{% endif %}>{{v}}</option>{% endfor %}</select>
+          </label>
+          <label class="field"><span>Weather</span><small>External demand signal</small>
+            <select name="weather_condition">{% for v in values["Weather Condition"] %}<option value="{{v}}" {% if form.weather_condition==v %}selected{% endif %}>{{v}}</option>{% endfor %}</select>
+          </label>
+          <label class="field"><span>Seasonality</span><small>Season effect</small>
+            <select name="seasonality">{% for v in values["Seasonality"] %}<option value="{{v}}" {% if form.seasonality==v %}selected{% endif %}>{{v}}</option>{% endfor %}</select>
+          </label>
+          <label class="field"><span>Epidemic flag</span><small>Exceptional condition</small>
+            <select name="epidemic"><option value="0" {% if form.epidemic=="0" %}selected{% endif %}>No</option><option value="1" {% if form.epidemic=="1" %}selected{% endif %}>Yes</option></select>
+          </label>
+        </div>
+      </section>
+
+      <section class="section-heading split-heading">
+        <div>
+          <div class="eyebrow">02 / SIGNALS</div>
+          <h2>Inventory & market signals</h2>
+          <p>Use current numbers to estimate the upcoming demand level.</p>
+        </div>
+        <button type="submit" class="predict-button" id="predict-btn">
+          <span class="button-glow"></span>
+          <span class="button-content"><span class="spark">✦</span> Predict demand <span class="arrow">→</span></span>
+        </button>
+      </section>
+
+      <section class="glass-panel form-card tilt-card">
+        <div class="field-grid compact-grid">
+          <label class="field"><span>Inventory level</span><small>Units currently in stock</small><input type="number" name="inventory_level" min="0" step="1" value="{{ form.inventory_level }}" required></label>
+          <label class="field"><span>Units sold</span><small>Recent sales signal</small><input type="number" name="units_sold" min="0" step="1" value="{{ form.units_sold }}" required></label>
+          <label class="field"><span>Units ordered</span><small>Recent inbound quantity</small><input type="number" name="units_ordered" min="0" step="1" value="{{ form.units_ordered }}" required></label>
+          <label class="field"><span>Price</span><small>Current selling price</small><input type="number" name="price" min="0" step="0.01" value="{{ form.price }}" required></label>
+          <label class="field"><span>Discount</span><small>Current discount rate (%)</small><input type="number" name="discount" min="0" max="25" step="1" value="{{ form.discount }}" required></label>
+          <label class="field"><span>Competitor pricing</span><small>Comparable market price</small><input type="number" name="competitor_pricing" min="0" step="0.01" value="{{ form.competitor_pricing }}" required></label>
+          <label class="field"><span>Promotion</span><small>Active campaign signal</small><select name="promotion"><option value="0" {% if form.promotion=="0" %}selected{% endif %}>No promotion</option><option value="1" {% if form.promotion=="1" %}selected{% endif %}>Promotion active</option></select></label>
+        </div>
+      </section>
+    </form>
+
+    <!-- Results appear after a successful form submission. -->
+    {% if predictions %}
+      <section class="section-heading result-heading">
+        <div>
+          <div class="eyebrow accent">03 / MODEL OUTPUT</div>
+          <h2>Three views of expected demand</h2>
+          <p>Each model sees the same input context and returns an estimated demand level.</p>
+        </div>
+        <div class="winner-tag">{{ evaluation_winner }} selected for decision</div>
+      </section>
+
+      <section class="results-grid">
+        {% for name, value in predictions.items() %}
+          {% set is_winner = (name == evaluation_winner) %}
+          <article class="glass-panel result-card tilt-card {% if is_winner %}featured{% endif %}">
+            <div class="result-top">
+              <span class="model-index">0{{ loop.index }}</span>
+              {% if is_winner %}<span class="mini-status">BEST R²</span>{% endif %}
+            </div>
+            <div class="model-name">{{ name }}</div>
+            <div class="prediction-number"><strong>{{ value }}</strong><span>units</span></div>
+            <div class="prediction-line"></div>
+            <p>{% if name == 'Linear Regression' %}Fast linear baseline for the same demand signal set.{% elif name == 'Decision Tree' %}Rule-based nonlinear model for interpretable splits.{% else %}Ensemble model used for the final inventory recommendation.{% endif %}</p>
+          </article>
+        {% endfor %}
+      </section>
+
+      <section class="section-heading result-heading">
+        <div>
+          <div class="eyebrow accent">04 / CLASSIFICATION + CLUSTERING</div>
+          <h2>Demand category & inventory profile</h2>
+          <p>A classifier predicts a demand band; K-Means places this input in a data-driven inventory group.</p>
+        </div>
+        <div class="section-badge">Two additional data-mining techniques</div>
+      </section>
+
+      <section class="insight-grid">
+        <article class="glass-panel insight-card tilt-card classifier-insight">
+          <div class="insight-kicker"><span class="insight-dot violet-dot"></span>DECISION TREE CLASSIFIER</div>
+          <h3>Predicted demand level</h3>
+          <div class="insight-main">{{ classification_result.label }}</div>
+          <p>The class is defined from the training-set demand thresholds, not typed in by the user.</p>
+          <div class="insight-rule">{{ classification_result.rule }} units</div>
+          <div class="insight-note">Classes: Low, Medium and High. Demand itself is excluded from classifier inputs.</div>
+        </article>
+
+        <article class="glass-panel insight-card tilt-card cluster-insight">
+          <div class="insight-kicker"><span class="insight-dot cyan-dot"></span>K-MEANS CLUSTERING</div>
+          <h3>Inventory profile group</h3>
+          <div class="insight-main">Cluster {{ cluster_result.cluster_label }}</div>
+          <p>This input is grouped with records that have similar standardized inventory and market signals.</p>
+          <div class="profile-stat-grid">
+            <div><span>Average stock</span><strong>{{ cluster_result.mean_inventory }}</strong></div>
+            <div><span>Average units sold</span><strong>{{ cluster_result.mean_units_sold }}</strong></div>
+            <div><span>Average discount</span><strong>{{ cluster_result.mean_discount }}%</strong></div>
+            <div><span>Promotion records</span><strong>{{ cluster_result.promotion_rate }}%</strong></div>
+          </div>
+          <div class="insight-note">Profile summary: {{ cluster_result.records }} records. Cluster numbers are group IDs, not a performance ranking.</div>
+        </article>
+      </section>
+
+      <section class="decision-wrap">
+        <div class="glass-panel decision-card tilt-card {% if recommendation.status == 'REORDER REQUIRED' %}needs-stock{% endif %}">
+          <div class="decision-header">
+            <div>
+              <div class="eyebrow">05 / ACTION</div>
+              <h2>Inventory recommendation</h2>
+            </div>
+            <span class="decision-status">{{ recommendation.status }}</span>
+          </div>
+          <div class="decision-grid">
+            <div><span>Expected demand</span><strong>{{ recommendation.recommended_demand }}<em>units</em></strong></div>
+            <div><span>Current stock</span><strong>{{ form.inventory_level }}<em>units</em></strong></div>
+            <div><span>Suggested reorder</span><strong>{{ recommendation.reorder_qty }}<em>units</em></strong></div>
+            <div><span>Decision model</span><strong class="model-value">{{ recommendation.model }}</strong></div>
+          </div>
+          <div class="decision-footnote">
+            <span class="sparkle">✦</span>
+            Recommendation is derived from the model with the highest R² on the chronological test set.
+          </div>
+        </div>
+      </section>
+    {% endif %}
+
+    <!-- Model comparison and evaluation sections show measured performance. -->
+    <section class="section-heading benchmark-heading">
+      <div>
+        <div class="eyebrow">06 / BENCHMARK</div>
+        <h2>Model performance snapshot</h2>
+        <p>Evaluation metrics from the held-out chronological test set.</p>
+      </div>
+      <div class="section-badge">Lower MAE / RMSE · Higher R²</div>
+    </section>
+
+    <section class="glass-panel benchmark-card">
+      <div class="benchmark-grid">
+        {% for row in comparison %}
+          <div class="benchmark-row {% if row.Model == evaluation_winner %}top-model{% endif %}">
+            <div class="benchmark-model"><span class="benchmark-dot"></span><strong>{{ row.Model }}</strong>{% if row.Model == evaluation_winner %}<span class="winner-chip">Top R²</span>{% endif %}</div>
+            <div><small>MAE</small><strong>{{ '%.2f'|format(row.MAE) }}</strong></div>
+            <div><small>RMSE</small><strong>{{ '%.2f'|format(row.RMSE) }}</strong></div>
+            <div><small>R²</small><strong>{{ '%.3f'|format(row.R2) }}</strong></div>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="section-heading benchmark-heading">
+      <div>
+        <div class="eyebrow">07 / ADDITIONAL EVALUATION</div>
+        <h2>Classification & clustering quality</h2>
+        <p>Metrics from the same chronological evaluation design used by the analysis script.</p>
+      </div>
+      <div class="section-badge">Classification · Unsupervised clustering</div>
+    </section>
+
+    <section class="evaluation-grid">
+      <article class="glass-panel evaluation-card">
+        <div class="insight-kicker"><span class="insight-dot violet-dot"></span>DECISION TREE CLASSIFIER</div>
+        <div class="evaluation-metric">{{ '%.2f'|format(classification_metrics.accuracy * 100) }}<span>%</span></div>
+        <p>Test accuracy</p>
+        <div class="evaluation-detail"><span>Balanced accuracy</span><strong>{{ '%.2f'|format(classification_metrics.balanced_accuracy * 100) }}%</strong></div>
+        <div class="evaluation-detail"><span>Macro F1</span><strong>{{ '%.4f'|format(classification_metrics.macro_f1) }}</strong></div>
+        <div class="evaluation-detail"><span>Majority baseline accuracy</span><strong>{{ '%.2f'|format(classification_baseline_metrics.accuracy * 100) }}%</strong></div>
+      </article>
+      <article class="glass-panel evaluation-card">
+        <div class="insight-kicker"><span class="insight-dot cyan-dot"></span>K-MEANS CLUSTERING</div>
+        <div class="evaluation-metric">{{ '%.4f'|format(clustering_metrics.held_out_test_silhouette) }}</div>
+        <p>Held-out test-sample silhouette score</p>
+        <div class="evaluation-detail"><span>Selected clusters</span><strong>{{ clustering_metrics.cluster_count_selected }}</strong></div>
+        <div class="evaluation-detail"><span>Test sample size</span><strong>{{ '{:,}'.format(clustering_metrics.test_silhouette_sample_rows) }}</strong></div>
+        <div class="evaluation-note">Silhouette scores closer to 1 indicate clearer separation; scores near 0 indicate overlapping clusters. Cluster IDs are not rankings.</div>
+      </article>
+    </section>
+
+    <footer class="footer">
+      <span>Inventory Intelligence Studio</span>
+      <span>Built with Python · Flask · scikit-learn</span>
+    </footer>
+  </main>
+
+  <!-- Small browser interactions: tilt cards on desktop and show a loading state on submit. -->
+  <script>
+    (() => {
+      // Find cards that should tilt gently as the mouse moves over them.
+      const tiltCards = document.querySelectorAll('.tilt-card');
+      tiltCards.forEach((card) => {
+        card.addEventListener('pointermove', (event) => {
+          // Skip the tilt effect on touch devices, where it would not feel natural.
+          if (window.matchMedia('(pointer: coarse)').matches) return;
+          const rect = card.getBoundingClientRect();
+          const x = (event.clientX - rect.left) / rect.width;
+          const y = (event.clientY - rect.top) / rect.height;
+          const rotateY = (x - 0.5) * 7;
+          const rotateX = (0.5 - y) * 7;
+          card.style.setProperty('--rx', `${rotateX.toFixed(2)}deg`);
+          card.style.setProperty('--ry', `${rotateY.toFixed(2)}deg`);
+          card.style.setProperty('--mx', `${(x * 100).toFixed(1)}%`);
+          card.style.setProperty('--my', `${(y * 100).toFixed(1)}%`);
+        });
+        card.addEventListener('pointerleave', () => {
+          card.style.setProperty('--rx', '0deg');
+          card.style.setProperty('--ry', '0deg');
+          card.style.setProperty('--mx', '50%');
+          card.style.setProperty('--my', '50%');
+        });
+      });
+
+      // Find the prediction form and its submit button for the loading feedback.
+      const form = document.getElementById('prediction-form');
+      const button = document.getElementById('predict-btn');
+      if (form && button) {
+        form.addEventListener('submit', () => {
+          button.classList.add('loading');
+          button.querySelector('.button-content').innerHTML = '<span class="loader"></span> Running models…';
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
