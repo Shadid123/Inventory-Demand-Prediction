@@ -1,0 +1,43 @@
+Column,Value,Count,Percent
+Store ID,S001,15200,20.0
+Store ID,S002,15200,20.0
+Store ID,S003,15200,20.0
+Store ID,S004,15200,20.0
+Store ID,S005,15200,20.0
+Product ID,P0001,3800,5.0
+Product ID,P0002,3800,5.0
+Product ID,P0003,3800,5.0
+Product ID,P0004,3800,5.0
+Product ID,P0005,3800,5.0
+Product ID,P0006,3800,5.0
+Product ID,P0007,3800,5.0
+Product ID,P0008,3800,5.0
+Product ID,P0009,3800,5.0
+Product ID,P0010,3800,5.0
+Product ID,P0011,3800,5.0
+Product ID,P0012,3800,5.0
+Product ID,P0013,3800,5.0
+Product ID,P0014,3800,5.0
+Product ID,P0015,3800,5.0
+Product ID,P0016,3800,5.0
+Product ID,P0017,3800,5.0
+Product ID,P0018,3800,5.0
+Product ID,P0019,3800,5.0
+Product ID,P0020,3800,5.0
+Category,Groceries,30400,40.0
+Category,Furniture,13680,18.0
+Category,Clothing,12160,16.0
+Category,Toys,10640,14.0
+Category,Electronics,9120,12.0
+Region,North,30400,40.0
+Region,South,15200,20.0
+Region,East,15200,20.0
+Region,West,15200,20.0
+Weather Condition,Cloudy,24360,32.053
+Weather Condition,Sunny,22980,30.237
+Weather Condition,Rainy,17500,23.026
+Weather Condition,Snowy,11160,14.684
+Seasonality,Winter,21000,27.632
+Seasonality,Spring,18400,24.211
+Seasonality,Summer,18400,24.211
+Seasonality,Autumn,18200,23.947

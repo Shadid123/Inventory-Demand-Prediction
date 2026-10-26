@@ -1,0 +1,3 @@
+Model,accuracy,balanced_accuracy,macro_precision,macro_recall,macro_f1,weighted_f1
+Decision Tree Classifier,0.78368,0.78341,0.78946,0.78341,0.78577,0.78553
+Most-Frequent Baseline,0.36250,0.33333,0.12083,0.33333,0.17737,0.19289

@@ -1,0 +1,10 @@
+Metric,Value
+Rows,76000
+Columns,16
+Missing cells,0
+Exact duplicate rows,0
+First date,2022-01-01
+Last date,2024-01-30
+Training rows (chronological 80%),60800
+Test rows (later 20%),15200
+Test period starts,2023-09-01

@@ -1,0 +1,6 @@
+Category,Records,Mean_Demand,Median_Demand,Std_Demand
+Groceries,30400,120.9764,116.0000,48.3627
+Clothing,12160,112.6197,109.0000,41.0230
+Electronics,9120,97.4820,95.0000,40.5579
+Toys,10640,92.6070,92.0000,46.1704
+Furniture,13680,73.5811,72.0000,32.3361

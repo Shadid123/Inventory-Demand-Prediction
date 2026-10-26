@@ -1,0 +1,10 @@
+Stage,Action,Reason
+Schema validation,Verify all 16 expected columns are present,Catch a wrong or incomplete CSV before modeling
+Data quality,Count missing cells (0) and exact duplicate rows (0); no rows dropped,Record actual data quality without silently changing the dataset
+Date features,"Parse Date; derive Year, Month, Day, DayOfWeek, DayOfYear for regression/classification",Make calendar information available in numeric features
+Categorical encoding,OneHotEncoder(handle_unknown='ignore') in regression/classification pipelines,Represent nominal categories as model-readable numeric columns
+Missing-value handling,Median imputation for numeric / most-frequent imputation for categorical classifier inputs; median imputation for K-Means inputs,Make the analysis pipeline robust to missing feature values; no imputation is needed for the supplied complete CSV
+Clustering scale,StandardScaler on eight numeric inventory/market signals,Put features with different units/ranges on comparable scales for distance-based K-Means
+Target separation,Exclude Demand from classifier input features and from K-Means inputs,Prevent the target itself from being supplied as a predictor / clustering dimension
+Chronological evaluation,Use dates before 2023-09-01 for training and dates on/after it for testing,Evaluate on later observations instead of randomly mixing past and later rows
+Outlier policy,Report numeric ranges and visualize distributions; do not automatically remove or cap extreme values,Avoid treating unusual values as errors without source/business validation

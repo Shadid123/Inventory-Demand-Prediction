@@ -1,0 +1,49 @@
+{
+  "dataset": {
+    "rows": 76000,
+    "columns": 16,
+    "missing_cells": 0,
+    "duplicate_rows": 0,
+    "date_start": "2022-01-01",
+    "date_end": "2024-01-30",
+    "mean_demand": 104.3172,
+    "median_demand": 100.0,
+    "strongest_numeric_correlation_feature": "Units Sold",
+    "strongest_numeric_correlation": 0.8334
+  },
+  "classification": {
+    "model": "Decision Tree Classifier",
+    "thresholds": [
+      82.0,
+      121.0
+    ],
+    "metrics": {
+      "accuracy": 0.7836842105263158,
+      "balanced_accuracy": 0.7834108687358764,
+      "macro_precision": 0.7894588555537636,
+      "macro_recall": 0.7834108687358764,
+      "macro_f1": 0.7857685827160098,
+      "weighted_f1": 0.785525672453387
+    },
+    "baseline_metrics": {
+      "accuracy": 0.3625,
+      "balanced_accuracy": 0.3333333333333333,
+      "macro_precision": 0.12083333333333333,
+      "macro_recall": 0.3333333333333333,
+      "macro_f1": 0.17737003058103976,
+      "weighted_f1": 0.19288990825688074
+    },
+    "model_path": "models/demand_level_classifier.joblib"
+  },
+  "clustering": {
+    "algorithm": "K-Means",
+    "selected_k": 2,
+    "training_silhouette": 0.25812293784769713,
+    "held_out_test_silhouette": 0.26149068003388487,
+    "cluster_counts": {
+      "0": 25124,
+      "1": 50876
+    },
+    "model_path": "models/kmeans_inventory_profiles.joblib"
+  }
+}
