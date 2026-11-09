@@ -177,4 +177,4 @@ def index():
 
 # Start the local development server when this file is run directly.
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False, use_reloader=False)
